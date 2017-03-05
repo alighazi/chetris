@@ -74,7 +74,7 @@ int main()
 	Shader defaultShader("shader/default.vert", "shader/default.frag");
 	Shader lampShader("shader/default.vert", "shader/lamp.frag");
 	// Load models
-	Model model("data/model/room/room.obj");
+	Model model("data/model/nanosuit/nanosuit.obj");
 	Model cube("data/model/shape/cube.obj");
 	glm::vec3 lightPos(1.0f, 2.75f, -2.5f);
 	// Game loop
@@ -86,7 +86,7 @@ int main()
 		// Check if any events have been activiated (key pressed, mouse moved etc.) and call corresponding response functions
 		glfwPollEvents();
 
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		lightPos.x = cos(lastFrame)*4.0f;
@@ -117,22 +117,26 @@ int main()
 		GLint matShineLoc = glGetUniformLocation(defaultShader.Program, "material.shininess");
 
 		glUniform1f(matShineLoc, 8.0f);
+		GLint lightPosLoc = glGetUniformLocation(defaultShader.Program, "light.position");
 		GLint lightAmbientLoc = glGetUniformLocation(defaultShader.Program, "light.ambient");
 		GLint lightDiffuseLoc = glGetUniformLocation(defaultShader.Program, "light.diffuse");
 		GLint lightSpecularLoc = glGetUniformLocation(defaultShader.Program, "light.specular");
 
+		glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
 		glUniform3f(lightAmbientLoc, 0.2f, 0.2f, 0.2f);
 		glUniform3f(lightDiffuseLoc, 0.5f, 0.5f, 0.5f); // Let's darken the light a bit to fit the scene
 		glUniform3f(lightSpecularLoc, 1.0f, 1.0f, 1.0f);
 
-		GLint lightDirPos = glGetUniformLocation(defaultShader.Program, "light.direction");
-		glUniform3f(lightDirPos, -0.2f, -1.0f, -0.3f);  	
+		glUniform1f(glGetUniformLocation(defaultShader.Program, "light.constant"),  1.0f);
+		glUniform1f(glGetUniformLocation(defaultShader.Program, "light.linear"),    0.09);
+		glUniform1f(glGetUniformLocation(defaultShader.Program, "light.quadratic"), 0.032);	    
+	
 
-		for(int i=0;i<10;i++){
+		for(int i=0;i<5;i++){
 		// Draw the loaded model
-		modelMat = glm::translate(glm::mat4(1.0f), glm::vec3(sin(i)*4.0f, cos(i)*4.0f, -5.0f));
-		modelMat = glm::scale(modelMat,vec3(0.5f,0.5f,0.5f)*(i/4.0f));
-		modelMat = glm::rotate(modelMat, (cos(lastFrame) + sin(i/4.0f))*4.0f, vec3(i/3,1.0f,i/5));
+		modelMat = glm::scale(glm::mat4(1.0f),vec3(0.5f,0.5f,0.5f)*(i/10.0f));
+		modelMat = glm::translate(modelMat, glm::vec3(sin(i)*4.0f, cos(i)*4.0f, -5.0f));
+		//modelMat = glm::rotate(modelMat, (cos(lastFrame) + sin(i/4.0f))*4.0f, vec3(i/3,1.0f,i/5));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMat));
 
 		model.Draw(defaultShader);
