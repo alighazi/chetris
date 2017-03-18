@@ -61,7 +61,12 @@ glm::mat4 Camera::getViewProjection()
 	return _projection*_view;
 }
 
-const glm::vec3 * Camera::getPos() const
+const glm::vec3* Camera::getPos() const
 {
 	return &_pos;
+}
+
+const glm::vec3* Camera::getFront() const
+{
+	return &_front;
 }

@@ -22,4 +22,5 @@ public:
 	void zoom(double yOffset);
 	glm::mat4 getViewProjection();
 	const glm::vec3* getPos() const;
+	const glm::vec3* getFront() const;
 };

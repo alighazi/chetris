@@ -74,7 +74,7 @@ int main()
 	Shader defaultShader("shader/default.vert", "shader/default.frag");
 	Shader lampShader("shader/default.vert", "shader/lamp.frag");
 	// Load models
-	Model model("data/model/nanosuit/nanosuit.obj");
+	Model model("data/model/tower/tower.obj");
 	Model cube("data/model/shape/cube.obj");
 	glm::vec3 lightPos(1.0f, 2.75f, -2.5f);
 	// Game loop
@@ -117,19 +117,26 @@ int main()
 		GLint matShineLoc = glGetUniformLocation(defaultShader.Program, "material.shininess");
 
 		glUniform1f(matShineLoc, 8.0f);
-		GLint lightPosLoc = glGetUniformLocation(defaultShader.Program, "light.position");
 		GLint lightAmbientLoc = glGetUniformLocation(defaultShader.Program, "light.ambient");
 		GLint lightDiffuseLoc = glGetUniformLocation(defaultShader.Program, "light.diffuse");
 		GLint lightSpecularLoc = glGetUniformLocation(defaultShader.Program, "light.specular");
 
-		glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
 		glUniform3f(lightAmbientLoc, 0.2f, 0.2f, 0.2f);
-		glUniform3f(lightDiffuseLoc, 0.5f, 0.5f, 0.5f); // Let's darken the light a bit to fit the scene
+		glUniform3f(lightDiffuseLoc, 0.8f, 0.8f, 0.8f); // Let's darken the light a bit to fit the scene
 		glUniform3f(lightSpecularLoc, 1.0f, 1.0f, 1.0f);
 
 		glUniform1f(glGetUniformLocation(defaultShader.Program, "light.constant"),  1.0f);
-		glUniform1f(glGetUniformLocation(defaultShader.Program, "light.linear"),    0.09);
-		glUniform1f(glGetUniformLocation(defaultShader.Program, "light.quadratic"), 0.032);	    
+		glUniform1f(glGetUniformLocation(defaultShader.Program, "light.linear"),    0.02);
+		glUniform1f(glGetUniformLocation(defaultShader.Program, "light.quadratic"), 0.02);
+
+		GLint lightPosLoc = glGetUniformLocation(defaultShader.Program, "light.position");
+		GLint lightDirectionLoc = glGetUniformLocation(defaultShader.Program, "light.direction");
+		GLint lightCutOffLoc = glGetUniformLocation(defaultShader.Program, "light.cutOff");
+		GLint lightOuterCutOffLoc = glGetUniformLocation(defaultShader.Program, "light.outerCutOff");
+		glUniform3f(lightPosLoc, cam.getPos()->x, cam.getPos()->y, cam.getPos()->z);		
+		glUniform3f(lightDirectionLoc, cam.getFront()->x, cam.getFront()->y, cam.getFront()->z);
+		glUniform1f(lightCutOffLoc, glm::cos(glm::radians(5.f))); 	    
+		glUniform1f(lightOuterCutOffLoc, glm::cos(glm::radians(25.f))); 	    
 	
 
 		for(int i=0;i<5;i++){
