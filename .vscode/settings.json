@@ -15,6 +15,9 @@
         "typeinfo": "cpp",
         "*.tcc": "cpp",
         "fstream": "cpp",
-        "array": "cpp"
+        "array": "cpp",
+        "utility": "cpp",
+        "cstddef": "cpp",
+        "ctime": "cpp"
     }
 }

@@ -33,6 +33,7 @@ private:
 	void loadModel(string path);
 	void processNode(aiNode* node, const aiScene* scene);
 	Mesh processMesh(aiMesh* mesh, const aiScene* scene);
+	void calculateTangents(aiMesh* mesh, vector<Vertex> *vertices);
 	vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, string typeName);
 	GLint TextureFromFile(const char * path, string directory);
 };

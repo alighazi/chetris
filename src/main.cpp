@@ -20,6 +20,8 @@ using std::vector;
 using glm::vec3;
 using std::complex;
 
+#define CAPTURE_MOUSE
+
 static void error_callback(int error, const char* description)
 {
 	fprintf(stderr, "Error: %s\n", description);
@@ -48,7 +50,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 GLfloat deltaTime = 0.0f;	// Time between current frame and last frame
 GLfloat lastFrame = 0.0f;  	// Time of last frame
 
-DirectionalLight dir_light(vec3(-0.2f, -1.0f, -0.3f),vec3(0.05f, 0.05f, 0.05f),vec3(0.4f, 0.4f, 0.4f),vec3(0.5f, 0.5f, 0.5f));
+DirectionalLight dir_light(vec3(-0.2f, -1.0f, -0.3f),vec3(0.05f, 0.05f, 0.05f),vec3(0.4f, 0.4f, 0.4f)*0.1f,vec3(0.5f, 0.5f, 0.5f));
 SpotLight spot_light(vec3(0.05f, 0.05f, 0.05f),vec3(0.4f, 0.4f, 0.4f),vec3(0.5f, 0.5f, 0.5f),vec3(0.0f), vec3(0.0f),1.0f, 0.02f, 0.02f,glm::cos(glm::radians(20.f)),glm::cos(glm::radians(25.f)));
 
 
@@ -71,7 +73,9 @@ int main()
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
+	#ifdef CAPTURE_MOUSE
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	#endif
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
@@ -84,7 +88,7 @@ int main()
 	Shader defaultShader("shader/default.vert", "shader/default.frag");
 	Shader lampShader("shader/default.vert", "shader/lamp.frag");
 	// Load models
-	Model model("data/model/tower/tower.obj");
+	Model model("data/model/oildrum/oildrum.obj");
 	Model cube("data/model/shape/cube.obj");
 	glm::vec3 lightPos(1.0f, 2.75f, -2.5f);
 	// Game loop
@@ -140,9 +144,9 @@ int main()
 		spot_light.addToShader(defaultShader.Program,"spotlight");
 
 
-		for(int i=0;i<5;i++){
+		for(int i=0;i<10;i++){
 		// Draw the loaded model
-		modelMat = glm::scale(glm::mat4(1.0f),vec3(0.5f,0.5f,0.5f)*(i/10.0f));
+		modelMat = glm::scale(glm::mat4(1.0f),vec3(1.0f));
 		modelMat = glm::translate(modelMat, glm::vec3(sin(i)*4.0f, cos(i)*4.0f, -5.0f));
 		//modelMat = glm::rotate(modelMat, (cos(lastFrame) + sin(i/4.0f))*4.0f, vec3(i/3,1.0f,i/5));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMat));
@@ -160,5 +164,3 @@ int main()
 	glfwTerminate();
 	return 0;
 }
-
-

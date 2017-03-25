@@ -1,15 +1,17 @@
 #version 330 core
+#define NR_POINT_LIGHTS 4
 in vec2 TexCoords;
 in vec3 Normal;  
-in vec3 FragPos;
+in vec3 TangentViewPos;
+in vec3 TangentFragPos;
+in vec3 TangetnPointLightPos[NR_POINT_LIGHTS];
 
 out vec4 color;
-
-uniform vec3 viewPos;	
 
 struct Material {
     sampler2D texture_diffuse1;
     sampler2D texture_specular1;
+    sampler2D texture_normal1;
     float shininess;
 };   
 uniform Material material;
@@ -33,8 +35,7 @@ struct PointLight {
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
-};  
-#define NR_POINT_LIGHTS 4  
+};    
 uniform PointLight pointLights[NR_POINT_LIGHTS];
 
 struct SpotLight{
@@ -56,20 +57,21 @@ uniform SpotLight spotlight;
 
 
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir);  
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);  
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 tangentLightPos);  
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);  
 
 void main(){
-    // Properties
-    vec3 norm = normalize(Normal);
-    vec3 viewDir = normalize(viewPos - FragPos);
+    vec3 norm = texture(material.texture_normal1, TexCoords).rgb;
+    // Transform normal vector to range [-1,1]
+    norm = normalize(norm * 2.0 - 1.0);   
+    vec3 viewDir = normalize(TangentViewPos - TangentFragPos);
     // Phase 1: Directional lighting
     vec3 result = CalcDirLight(dirLight, norm, viewDir);
     // Phase 2: Point lights
     for(int i = 0; i < NR_POINT_LIGHTS; i++)
-        result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);    
+        result += CalcPointLight(pointLights[i], norm, TangentFragPos, viewDir,TangetnPointLightPos[i]);    
     // Phase 3: Spot light
-    result += CalcSpotLight(spotlight, norm, FragPos, viewDir);    
+    result += CalcSpotLight(spotlight, norm, TangentFragPos, viewDir);    
     color = vec4(result, 1.0);
 }
 
@@ -87,16 +89,16 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir){
     return (ambient + diffuse + specular);
 }
 
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 tangentLightPos)
 {
-    vec3 lightDir = normalize(light.position - fragPos);
+    vec3 lightDir = normalize(tangentLightPos - fragPos);
     // Diffuse shading
     float diff = max(dot(normal, lightDir), 0.0);
     // Specular shading
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
     // Attenuation
-    float distance    = length(light.position - fragPos);
+    float distance    = length(tangentLightPos - fragPos);
     float attenuation = 1.0f / (light.constant + light.linear * distance + 
   			     light.quadratic * (distance * distance));    
     // Combine results
