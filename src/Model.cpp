@@ -176,7 +176,7 @@ GLint Model::TextureFromFile(const char *path, string directory)
     return textureID;
 }
 
-void Model::Draw(Shader shader)
+void Model::Draw(Shader* shader)
 {
     for (GLuint i = 0; i < this->meshes.size(); i++)
 	this->meshes[i].Draw(shader);

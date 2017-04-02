@@ -19,6 +19,7 @@
         "utility": "cpp",
         "cstddef": "cpp",
         "ctime": "cpp",
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "string": "cpp"
     }
 }

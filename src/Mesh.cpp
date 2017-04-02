@@ -42,7 +42,7 @@ void Mesh::setupMesh()
 	glBindVertexArray(0);
 }
 
-void Mesh::Draw(Shader shader)
+void Mesh::Draw(Shader* shader)
 {
 	GLuint diffuseNr = 1;
 	GLuint specularNr = 1;
@@ -59,7 +59,7 @@ void Mesh::Draw(Shader shader)
 		else if(name=="texture_normal") 
 			ss << normalNr++;
 		number = ss.str();
-		glUniform1i(glGetUniformLocation(shader.Program, ("material." + name + number).c_str()), i);
+		glUniform1i(glGetUniformLocation(shader->Program, ("material." + name + number).c_str()), i);
 		glActiveTexture(GL_TEXTURE0 + i); // Activate proper texture unit before binding		
 		glBindTexture(GL_TEXTURE_2D, this->textures[i].id);
 	}

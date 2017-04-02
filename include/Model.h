@@ -23,7 +23,7 @@ public:
 	{
 		this->meshes.push_back(mesh);
 	}
-	void Draw(Shader shader);
+	void Draw(Shader* shader);
 private:
 	/*  Model Data  */
 	vector<Texture> textures_loaded;
