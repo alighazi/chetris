@@ -18,6 +18,7 @@
         "array": "cpp",
         "utility": "cpp",
         "cstddef": "cpp",
-        "ctime": "cpp"
+        "ctime": "cpp",
+        "sstream": "cpp"
     }
 }

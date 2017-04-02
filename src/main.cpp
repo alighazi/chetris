@@ -88,7 +88,7 @@ int main()
 	Shader defaultShader("shader/default.vert", "shader/default.frag");
 	Shader lampShader("shader/default.vert", "shader/lamp.frag");
 	// Load models
-	Model model("data/model/oildrum/oildrum.obj");
+	Model model("data/model/tower/tower.obj");
 	Model cube("data/model/shape/cube.obj");
 	glm::vec3 lightPos(1.0f, 2.75f, -2.5f);
 	// Game loop
@@ -146,7 +146,7 @@ int main()
 
 		for(int i=0;i<10;i++){
 		// Draw the loaded model
-		modelMat = glm::scale(glm::mat4(1.0f),vec3(1.0f));
+		modelMat = glm::scale(glm::mat4(1.0f),vec3(.10f));
 		modelMat = glm::translate(modelMat, glm::vec3(sin(i)*4.0f, cos(i)*4.0f, -5.0f));
 		//modelMat = glm::rotate(modelMat, (cos(lastFrame) + sin(i/4.0f))*4.0f, vec3(i/3,1.0f,i/5));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMat));

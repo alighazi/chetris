@@ -38,7 +38,7 @@ class DirectionalLight: Light{
 
     void addToShader(GLuint program, std::string varName) override {
         Light::addToShader(program, varName);
-        addShaderUniform(program, varName, "direction", _direction);
+        glUniform3f(glGetUniformLocation(program, ("direction_"+varName).c_str()), _direction.x,_direction.y,_direction.z);  
     }
     
     private:
@@ -53,8 +53,9 @@ class PointLight:Light{
 
     void addToShader(GLuint program, std::string varName) override {
         Light::addToShader(program, varName);
-  
-        addShaderUniform(program, varName, "position", _position);        
+
+        //postion is sent outside of the light struct cos they need to be converted to tangent space in vertex shader first
+        glUniform3f(glGetUniformLocation(program, ("position_"+varName).c_str()), _position.x,_position.y,_position.z);   
         addShaderUniform(program, varName, "constant", _constant);        
         addShaderUniform(program, varName, "linear", _linear);        
         addShaderUniform(program, varName, "quadratic", _quadratic);   
@@ -78,8 +79,9 @@ class SpotLight:Light{
     void addToShader(GLuint program, std::string varName) override {
         Light::addToShader(program, varName);
 
-        addShaderUniform(program, varName, "direction", _direction);        
-        addShaderUniform(program, varName, "position", _position);        
+        //postion is sent outside of the light struct cos they need to be converted to tangent space in vertex shader first
+        glUniform3f(glGetUniformLocation(program, ("position_"+varName).c_str()), _position.x,_position.y,_position.z);  
+        glUniform3f(glGetUniformLocation(program, ("direction_"+varName).c_str()), _direction.x,_direction.y,_direction.z);  
         addShaderUniform(program, varName, "constant", _constant);        
         addShaderUniform(program, varName, "linear", _linear);        
         addShaderUniform(program, varName, "quadratic", _quadratic);   

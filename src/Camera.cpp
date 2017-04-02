@@ -51,14 +51,25 @@ void Camera::zoom(double yOffset)
 
 glm::mat4 Camera::getViewProjection()
 {
+	getView();
+	getProjection();
+	return _projection*_view;
+}
+
+const glm::mat4* Camera::getView()
+{
 	_front.x = cos(glm::radians(_pitch)) * cos(glm::radians(_yaw));
 	_front.y = sin(glm::radians(_pitch));
 	_front.z = cos(glm::radians(_pitch)) * sin(glm::radians(_yaw));
 	_front = glm::normalize(_front);
 	_view = glm::lookAt(_pos, _pos + _front, _up);
-	_projection = glm::perspective(_fov, _windowWidth / _windowHeight, 0.1f, 100.0f);
+	return &_view;
+}
 
-	return _projection*_view;
+const glm::mat4* Camera::getProjection()
+{
+	_projection = glm::perspective(_fov, _windowWidth / _windowHeight, 0.1f, 100.0f);
+	return &_projection;
 }
 
 const glm::vec3* Camera::getPos() const

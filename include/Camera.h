@@ -23,4 +23,6 @@ public:
 	glm::mat4 getViewProjection();
 	const glm::vec3* getPos() const;
 	const glm::vec3* getFront() const;
+	const glm::mat4* getView();
+	const glm::mat4* getProjection();
 };

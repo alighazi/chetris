@@ -49,8 +49,6 @@ void Mesh::Draw(Shader shader)
 	GLuint normalNr=1;
 	for (GLuint i = 0; i < this->textures.size(); i++)
 	{
-		glActiveTexture(GL_TEXTURE0 + i); // Activate proper texture unit before binding
-										  // Retrieve texture number (the N in diffuse_textureN)
 		stringstream ss;
 		string number;
 		string name = this->textures[i].type;
@@ -61,7 +59,8 @@ void Mesh::Draw(Shader shader)
 		else if(name=="texture_normal") 
 			ss << normalNr++;
 		number = ss.str();
-		glUniform1f(glGetUniformLocation(shader.Program, ("material." + name + number).c_str()), i);
+		glUniform1i(glGetUniformLocation(shader.Program, ("material." + name + number).c_str()), i);
+		glActiveTexture(GL_TEXTURE0 + i); // Activate proper texture unit before binding		
 		glBindTexture(GL_TEXTURE_2D, this->textures[i].id);
 	}
 	glActiveTexture(GL_TEXTURE0);
