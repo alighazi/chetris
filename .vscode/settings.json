@@ -20,6 +20,8 @@
         "cstddef": "cpp",
         "ctime": "cpp",
         "sstream": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "cmath": "cpp",
+        "complex": "cpp"
     }
 }

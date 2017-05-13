@@ -1,6 +1,7 @@
-#include "Mesh.h"
+#include "core/util/Mesh.h"
+#include "core/util/ModelManager.h"
 
-Mesh::Mesh(vector<Vertex> vertices, vector<GLuint> indices, vector<Texture> textures)
+Mesh::Mesh(vector<Vertex> vertices, vector<GLuint> indices, vector<Texture*> textures)
 {
 	this->vertices = vertices;
 	this->indices = indices;
@@ -47,11 +48,12 @@ void Mesh::Draw(Shader* shader)
 	GLuint diffuseNr = 1;
 	GLuint specularNr = 1;
 	GLuint normalNr=1;
-	for (GLuint i = 0; i < this->textures.size(); i++)
+	int uniform=0;
+	for (const auto& kv : ModelManager::instance().textures_)
 	{
 		stringstream ss;
 		string number;
-		string name = this->textures[i].type;
+		string name = kv.second->type;
 		if (name == "texture_diffuse")
 			ss << diffuseNr++; 
 		else if (name == "texture_specular")
@@ -59,11 +61,12 @@ void Mesh::Draw(Shader* shader)
 		else if(name=="texture_normal") 
 			ss << normalNr++;
 		number = ss.str();
-		glUniform1i(glGetUniformLocation(shader->Program, ("material." + name + number).c_str()), i);
-		glActiveTexture(GL_TEXTURE0 + i); // Activate proper texture unit before binding		
-		glBindTexture(GL_TEXTURE_2D, this->textures[i].id);
+		glUniform1i(glGetUniformLocation(shader->Program, ("material." + name + number).c_str()), uniform);
+		glActiveTexture(GL_TEXTURE0 +uniform ); // Activate proper texture unit before binding		
+		glBindTexture(GL_TEXTURE_2D, kv.second->id);
+		uniform++;
 	}
-	glActiveTexture(GL_TEXTURE0);
+	//glActiveTexture(GL_TEXTURE0);
 
 	// Draw mesh
 	glBindVertexArray(this->VAO);

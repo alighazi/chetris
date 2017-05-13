@@ -1,4 +1,4 @@
-#include "Image.h"
+#include "core/util/ImageInfo.h"
 #include <iostream>
 
 ImageInfo::ImageInfo(const char * filename):width(0),height(0),pixels(NULL),dib(0)

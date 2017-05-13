@@ -11,6 +11,7 @@ include_directories(include)
 find_package(glfw3 3.2 REQUIRED)
 
 file(GLOB SOURCES "src/*.cpp" "src/*.c")
+add_subdirectory("${PROJECT_SOURCE_DIR}/src/core")
 
 add_executable(gl ${SOURCES})
 target_link_libraries(gl glfw libfreeimage.so libassimp.so)

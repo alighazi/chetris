@@ -89,8 +89,8 @@ class SpotLight:Light{
         addShaderUniform(program, varName, "outerCutOff", _outer_cutoff);     
     }
 
-    inline void setPosition(vec3 position){ _position=position; }
-    inline void setDirection(vec3 direction){ _direction=direction; }
+    inline void setPosition(const vec3 position){ _position=position; }
+    inline void setDirection(const vec3 direction){ _direction=direction; }
 
     private:
     vec3 _position;
