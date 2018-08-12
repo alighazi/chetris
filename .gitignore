@@ -101,7 +101,7 @@ dkms.conf
 !.vscode/extensions.json
 
 build/*
-data/model/*
+# data/model/*
 
 GPATH
 GTAGS
