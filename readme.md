@@ -14,7 +14,7 @@ download the stable release then run
 
 1. `cmake CMakeLists.txt -G 'Unix Makefiles'`
 2. `make`
-3.`cmake --build . --target install`
+3. `cmake --build . --target install`
 
 ## freeimage
 
