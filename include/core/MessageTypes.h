@@ -1,9 +1,0 @@
-#ifndef CORE_MESSAGE_TYPE_H
-#define CORE_MESSAGE_TYPE_H
-
-enum MessageType {
-	MESSAGE_CAMERA_CHANGED,
-	MESSAGE_MESH_CHANGED,
-};
-
-#endif

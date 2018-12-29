@@ -7,11 +7,12 @@ public:
 	unsigned int width;
 	unsigned int height;
 	BYTE* pixels;
+	const char * getFileName() const;
 	
 	bool isOk();
 	void free();
 	~ImageInfo();
 private:
 	FIBITMAP* dib;
-
+	const char* fileName;
 };
