@@ -1,6 +1,7 @@
 #include <string>
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp> 
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "core/util/Shader.h"
@@ -178,7 +179,11 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // also clear the depth buffer now!
 
-        shader2.setFloat("t",currentFrame);
+        glm::mat4 trans(1.0f);
+        float rads=glm::radians(fmodf(currentFrame*160,360));
+        float rad2=glm::radians(fmodf(currentFrame*40,360));
+        trans = glm::translate(trans, glm::vec3(fmodf(currentFrame/10.f,2.0f)-1.f,sin(rad2),0.0f));
+        shader2.setMat4("transform", trans);
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture1);
@@ -186,6 +191,9 @@ int main()
         glBindTexture(GL_TEXTURE_2D, texture2);
 
         glBindVertexArray(VAO);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        trans = glm::translate(trans, glm::vec3(fmodf(currentFrame/10.f,2.0f)-1.f,cos(rad2),0.0f));
+        shader2.setMat4("transform", trans);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
