@@ -8,7 +8,7 @@
 #include "core/util/Shader.h"
 #include "core/util/ImageInfo.h"
 #include "core/util/to_string.hpp"
-#include "core/triangle_fractal.h"
+#include "core/shape.h"
 
 using glm::vec3;
 
@@ -42,7 +42,8 @@ std::vector<float> vertices;
 void load_vertices(int depth, int color_seed){
     //TODO: populate indices as well
     auto indices = std::vector<unsigned int>();
-    vertices = triangle_fractal::compute_vertices(depth, color_seed);
+    auto size = sizeof(shape::cube_vertices)/sizeof(float);
+    vertices.insert(vertices.end(), &shape::cube_vertices[0], &shape::cube_vertices[size]);
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -58,13 +59,13 @@ void load_vertices(int depth, int color_seed){
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)*sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
 
     // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     // color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3* sizeof(float)));
+    //glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3* sizeof(float)));
     // texture cordinate attribute
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6* sizeof(float)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3* sizeof(float)));
     glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
+    //glEnableVertexAttribArray(1);
     glEnableVertexAttribArray(2);
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
     glBindBuffer(GL_ARRAY_BUFFER, 0); 
@@ -166,6 +167,10 @@ int main()
     // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
     // -------------------------------------------------------------------------------------------
     shader2.setInt("texture2", 1);
+    glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f)); 
+    glm::mat4 model2 = glm::translate(model, glm::vec3(1.0f, 1.0f, -2.f)); 
+    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -5.f));
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / SCR_HEIGHT, 0.1f, 100.0f);
 
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     // render loop
@@ -180,11 +185,14 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // also clear the depth buffer now!
 
         glm::mat4 trans(1.0f);
+        trans=model;
         // float rads=glm::radians(fmodf(currentFrame*160,360));
         // float rad2=glm::radians(fmodf(currentFrame*40,360));
         // trans = glm::translate(trans, glm::vec3(fmodf(currentFrame/10.f,2.0f)-1.f,sin(rad2),0.0f));
         shader2.Use();
-        shader2.setMat4("transform", trans);
+        shader2.setMat4("model", model);
+        shader2.setMat4("view", view);
+        shader2.setMat4("projection", projection);
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture1);
@@ -193,7 +201,10 @@ int main()
 
         glBindVertexArray(VAO);
         //glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-        glDrawArrays(GL_TRIANGLES, 0, vertices.size()*3/8);
+        glDrawArrays(GL_TRIANGLES, 0, vertices.size()*3/5);
+
+        shader2.setMat4("model", model2);
+        glDrawArrays(GL_TRIANGLES, 0, vertices.size()*3/5);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         glfwSwapBuffers(window);
