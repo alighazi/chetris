@@ -24,7 +24,7 @@ ImageInfo::ImageInfo(const char * filename):width(0),height(0),pixels(NULL),dib(
 		return;
 
 	dib = FreeImage_ConvertTo32Bits(dib);
-	FreeImage_FlipVertical(dib);
+	//FreeImage_FlipVertical(dib);
 	pixels = FreeImage_GetBits(dib);
 	width = FreeImage_GetWidth(dib);
 	height = FreeImage_GetHeight(dib);

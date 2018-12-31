@@ -15,6 +15,7 @@ find_package(assimp 4 REQUIRED)
 
 file(GLOB SOURCES "src/*.cpp" "src/*.c")
 add_subdirectory("${PROJECT_SOURCE_DIR}/src/core")
+add_subdirectory("${PROJECT_SOURCE_DIR}/src/util_external")
 
 add_executable(gl ${SOURCES})
 target_link_libraries(gl glfw libfreeimage.so libassimp.so.4)

@@ -1,4 +1,5 @@
 #include <string>
+#include <vector>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -6,6 +7,9 @@
 #include <GLFW/glfw3.h>
 #include "core/util/Shader.h"
 #include "core/util/ImageInfo.h"
+#include "core/util/to_string.hpp"
+
+using glm::vec3;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -31,6 +35,44 @@ void FreeImageErrorHandler(FREE_IMAGE_FORMAT fif, const char *message) {
 #pragma GCC diagnostic pop
 	printf(" ***\n");
 }
+
+std::vector<glm::vec3> inner_triangle(glm::vec3 &a,glm::vec3 &b,glm::vec3 &c, int depth){
+    float z= -depth/100.f;
+    auto in_a = (c-b)/2.f+b;
+    auto in_b = (a-c)/2.f+c;
+    auto in_c = (b-a)/2.f+a;
+    return  {
+                glm::vec3(in_a.x, in_a.y, z),
+                glm::vec3(in_b.x, in_b.y, z),
+                glm::vec3(in_c.x, in_c.y, z)
+            };
+}
+
+std::vector<glm::vec3> fractal(glm::vec3 &a,glm::vec3 &b,glm::vec3 &c, int depth){
+    std::cout<<"depth: "<<depth<<std::endl;
+    if(depth==0) return std::vector<vec3>();
+
+    auto inner = inner_triangle(a,b,c, depth);
+    if(depth==1)
+        return inner;
+    
+    depth--;
+    auto vertices = std::vector<vec3>();
+    vec3& inner_a=inner[0];
+    vec3& inner_b=inner[1];
+    vec3& inner_c=inner[2];
+    auto top_triangle = fractal(inner_b, inner_a , c, depth);
+    auto left_triangle = fractal(a, inner_c , inner_b, depth);
+    auto right_triangle = fractal(inner_c, b , inner_a, depth);
+
+    vertices.insert(std::end(vertices), std::begin(top_triangle), std::end(top_triangle));
+    vertices.insert(std::end(vertices), std::begin(right_triangle), std::end(right_triangle));
+    vertices.insert(std::end(vertices), std::begin(left_triangle), std::end(left_triangle));
+    vertices.insert(std::end(vertices), std::begin(inner), std::end(inner));
+
+    return vertices;
+}
+
 
 int main()
 { 
@@ -76,17 +118,54 @@ int main()
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
     
-    float vertices[] = {
-        // positions          // colors           // texture coords
-        0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
-        0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
+    std::vector<float> vertices_origin = {
+        // positions        // colors           // texture coords
+        -1.f, -1.f, 0.0f, 0.0f, 0.0f, 1.0f,   -0.5f, -0.3f,   // bottom left
+        1.f, -1.f, 0.0f,  0.0f, 1.0f, 0.0f,   1.5f, -0.3f,   // bottom right
+        0.f,  1.f, 0.0f, 1.0f, 1.0f, 0.0f,   0.5f, 1.7f    // top mid  
     };
-    unsigned int indices[]={
-        0,1,3,
-        1,2,3
-    };
+    auto indices = std::vector<unsigned int>();
+
+    auto vertices = std::vector<float>();
+    int stride=8;
+    vec3 a = vec3(-1.f, -1.f, 0.0f);
+    vec3 b = vec3(1.f, -1.f, 0.0f);
+    vec3 c = vec3(0.f,  1.f, 0.0f);
+    std::cout<<"a b c: "<<std::to_string(a)<<std::to_string(b)<<std::to_string(c)<<std::endl;
+    auto inner=fractal(a,b,c,6);
+    std::cout<<"inner has "<<inner.size()<<" vertices:\n"<<std::to_string(inner)<<std::endl;
+    for(int i=0;i<inner.size();i++){
+        vertices.push_back(inner[i].x);
+        vertices.push_back(inner[i].y);
+        vertices.push_back(inner[i].z);
+        //color
+        float rad1=glm::radians((i%6) * 60.f);
+        float rad2=glm::radians((i%18) * 20.f);
+        float rad3=glm::radians((i%36) * 10.f);
+        vertices.push_back(0.5*sin(rad1)+0.5f);
+        vertices.push_back(0.5*sin(rad2)+0.5f);
+        vertices.push_back(0.5*sin(rad3)+0.5f);
+        //u,v
+        if(i%3 == 0){
+            //v= a = top right
+            vertices.push_back(-0.5f);
+            vertices.push_back(1.2f);
+        }else if (i%3 == 1){
+            //v= b = top left
+            vertices.push_back(1.5f);
+            vertices.push_back(1.2f);
+        }else{
+            //v = c = bottom mid
+            vertices.push_back(0.5f);
+            vertices.push_back(-0.7f);
+        }
+
+        indices.push_back(i);
+    }
+    std::cout<<"indices:\n"<<std::to_string(indices)<<std::endl;
+    std::cout<<"vertices:\n"<<std::to_string(vertices,3)<<std::endl;
+
+ 
 
     unsigned int VBO, VAO, EBO;
     glGenVertexArrays(1, &VAO);
@@ -97,11 +176,11 @@ int main()
     //initializing VBO, VAO
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(float), vertices.data(), GL_STATIC_DRAW);
 
     //Element buffer object
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)*sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
 
     // position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
@@ -124,8 +203,8 @@ int main()
     glGenTextures(1, &texture1);
     glBindTexture(GL_TEXTURE_2D, texture1);
     // set the texture wrapping parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
     // set texture filtering parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -180,9 +259,10 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // also clear the depth buffer now!
 
         glm::mat4 trans(1.0f);
-        float rads=glm::radians(fmodf(currentFrame*160,360));
-        float rad2=glm::radians(fmodf(currentFrame*40,360));
-        trans = glm::translate(trans, glm::vec3(fmodf(currentFrame/10.f,2.0f)-1.f,sin(rad2),0.0f));
+        // float rads=glm::radians(fmodf(currentFrame*160,360));
+        // float rad2=glm::radians(fmodf(currentFrame*40,360));
+        // trans = glm::translate(trans, glm::vec3(fmodf(currentFrame/10.f,2.0f)-1.f,sin(rad2),0.0f));
+        shader2.Use();
         shader2.setMat4("transform", trans);
 
         glActiveTexture(GL_TEXTURE0);
@@ -191,10 +271,8 @@ int main()
         glBindTexture(GL_TEXTURE_2D, texture2);
 
         glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        trans = glm::translate(trans, glm::vec3(fmodf(currentFrame/10.f,2.0f)-1.f,cos(rad2),0.0f));
-        shader2.setMat4("transform", trans);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        //glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_TRIANGLES, 0, vertices.size()*3/8);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         glfwSwapBuffers(window);
