@@ -74,6 +74,25 @@ void load_vertices(int depth, int color_seed){
     glBindVertexArray(0); 
 }
 
+vec3 cameraPos = vec3(0.f,0.f,3.f);
+vec3 camTarget = vec3(0.f,0.f,-1.f);
+vec3 cameraUp =  vec3(0.f,1.f,0.f);
+
+void update(GLFWwindow* window, float deltaTime){
+    float velocity = 10.f * deltaTime;
+    /*cross product follows the right hand rule, that is if first vector (here cameraUp) is in the direction of the pointing finger 
+    and the second vector (here cameraTarget) is in the direction of the middle finger bent then the result would be in the direction
+    of the thumb.
+    */
+    if(glfwGetKey(window, GLFW_KEY_LEFT)== GLFW_PRESS)
+        cameraPos+=glm::normalize(glm::cross(cameraUp, camTarget))*velocity;
+    if(glfwGetKey(window, GLFW_KEY_RIGHT)== GLFW_PRESS)
+        cameraPos+=glm::normalize(glm::cross(camTarget, cameraUp))*velocity;
+    if(glfwGetKey(window, GLFW_KEY_DOWN)== GLFW_PRESS)
+        cameraPos+=vec3(0, 0, 1.f)*velocity;
+    if(glfwGetKey(window, GLFW_KEY_UP)== GLFW_PRESS)
+        cameraPos+=vec3(0, 0, -1.f)*velocity;
+}
 int main()
 { 
 	FreeImage_SetOutputMessage(FreeImageErrorHandler);
@@ -169,7 +188,8 @@ int main()
     shader2.setInt("texture2", 1);
     glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f)); 
     glm::mat4 model2 = glm::translate(model, glm::vec3(1.0f, 1.0f, -2.f)); 
-    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -5.f));
+    glm::mat4 view;
+
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / SCR_HEIGHT, 0.1f, 100.0f);
 
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -179,7 +199,7 @@ int main()
 		GLfloat currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-            
+        update(window, deltaTime);
         // render
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // also clear the depth buffer now!
@@ -189,6 +209,10 @@ int main()
         // float rads=glm::radians(fmodf(currentFrame*160,360));
         // float rad2=glm::radians(fmodf(currentFrame*40,360));
         // trans = glm::translate(trans, glm::vec3(fmodf(currentFrame/10.f,2.0f)-1.f,sin(rad2),0.0f));
+
+        glm::mat4 view;
+        view = glm::lookAt(cameraPos,cameraPos+camTarget, cameraUp); 
+
         shader2.Use();
         shader2.setMat4("model", model);
         shader2.setMat4("view", view);
