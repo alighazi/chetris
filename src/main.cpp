@@ -105,9 +105,14 @@ int main()
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
-    Sigil* s1= new Sigil(Sigil::blocks_S, vec3(-2.f,0.f,-3.f));
-    Sigil* s2= new Sigil(Sigil::blocks_SR, vec3(0.f,0.f,-3.f));
-    Sigil* s3= new Sigil(Sigil::blocks_L, vec3(2.f,0.f,-3.f));
+    vector<Sigil*> sigils;
+    sigils.push_back(new Sigil(Sigil::blocks_S, vec3(-2.f,0.f,-3.f)));
+    sigils.push_back(new Sigil(Sigil::blocks_SR, vec3(-1.f,0.f,-3.f)));
+    sigils.push_back(new Sigil(Sigil::blocks_L, vec3(0.f,0.f,-3.f)));
+    sigils.push_back(new Sigil(Sigil::blocks_LR, vec3(1.f,0.f,-3.f)));
+    sigils.push_back(new Sigil(Sigil::blocks_Box, vec3(2.f,0.f,-3.f)));
+    sigils.push_back(new Sigil(Sigil::blocks_Bar, vec3(-3.f,0.f,-3.f)));
+    sigils.push_back(new Sigil(Sigil::blocks_S, vec3(3.f,0.f,-3.f)));
 
     // load and create a texture 
     unsigned int texture1, texture2;
@@ -161,9 +166,19 @@ int main()
     // render loop
     while (!glfwWindowShouldClose(window))
     {
+        static float currentSecond;
+        static int fps;
 		GLfloat currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
+        currentSecond += deltaTime;
+        fps++;
+        if(currentSecond >= 1){
+            std::cout<<"FPS: "<<fps<<std::endl;
+            currentSecond = 0;
+            fps = 0;
+        }
+
         update(window, deltaTime);
         // render
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -178,18 +193,18 @@ int main()
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
 
-        s1->update(deltaTime, currentFrame);
-        s1->render(&shader2);
-        s2->update(deltaTime, currentFrame);
-        s2->render(&shader2);
-        s3->update(deltaTime, currentFrame);
-        s3->render(&shader2);
+        for(int i=0;i<sigils.size();i++){
+            sigils[i]->update(deltaTime, currentFrame);
+            sigils[i]->render(&shader2);
+        }
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-    delete s1;
+    for(int i=0;i<sigils.size();i++){
+        delete sigils[i];
+    }
     glfwTerminate();
     return 0;
 }
