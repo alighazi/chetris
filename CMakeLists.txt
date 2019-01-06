@@ -2,7 +2,7 @@ include(CMakeToolsHelpers OPTIONAL)
 cmake_minimum_required(VERSION 2.8.9)
 project(gl)
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
 
 

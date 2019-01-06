@@ -1,13 +1,12 @@
-#ifndef GAME_WORLD_H
-#define GAME_WORLD_H
+#pragma once
 
 #include <vector>
-#include "GameObject.h"
+#include "game_object.h"
 #include "Camera.h"
 
 class GameWorld{
     private:
-    std::vector<GameObject> _objects;
+    std::vector<GameObject*> _objects;
     Camera _camera;
 
     public:
@@ -16,7 +15,7 @@ class GameWorld{
     GameWorld():_camera(WINDOW_WIDTH, WINDOW_HEIGHT){}
     void addObject(GameObject* obj);
     void update(float dt, float elapsed);
-    void render();
+    void render(Shader* shader);
     inline Camera* getCam() {return &_camera;}
 
     //singletone
@@ -28,5 +27,3 @@ class GameWorld{
     GameWorld(GameWorld const&)      = delete;
     void operator=(GameWorld const&)  = delete;
 };
-
-#endif
