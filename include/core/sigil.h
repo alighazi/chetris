@@ -7,8 +7,10 @@ using std::vector;
 #include "game_object.h"
 #include "transform.h"
 
+
 class Sigil : GameObject
 {
+friend class SigilBoard;
 public:
     static const int SIZE = 4;
     static constexpr bool blocks_S[SIZE][SIZE]={    {0,1,1,0},
@@ -35,13 +37,14 @@ public:
                                                     {0,0,0,0},
                                                     {0,0,0,0},
                                                     {0,0,0,0}};                                                
-    Sigil(const bool blocks[SIZE][SIZE], const glm::vec3 pos);
+    Sigil(const bool blocks[SIZE][SIZE], const glm::ivec2 pos);
     ~Sigil();
     void render(Shader* shader);
     void update(float dt, float t);
-    Transform transform;
+    glm::ivec2 position;
 private:
     bool blocks_[Sigil::SIZE][Sigil::SIZE];
     vector<Vertex> vertices_;
     unsigned int vBO_, vAO_, eBO_;
+    Transform transform_;
 };

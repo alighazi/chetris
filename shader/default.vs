@@ -10,7 +10,7 @@ uniform mat4 view;
 uniform mat4 projection;
 void main()
 {
-    gl_Position =  (projection * view * model) * vec4(aPos, 1.0f);
+    gl_Position =  projection * view * model * vec4(aPos, 1.0f);
     //>vertexColor = vec4(sin(t*1)* aColor.x, sin(t*2)* aColor.y, sin(t*3)* aColor.z, 1.0);
     vertexColor = vec4(aColor, 1.0f);
     texCoord = aTexCoord;

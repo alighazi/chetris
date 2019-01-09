@@ -1,12 +1,13 @@
 #include <glad/glad.h>
+#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include "core/shape.h"
 #include "core/sigil.h"
 
-Sigil::Sigil(const bool blocks[SIZE][SIZE], const glm::vec3 pos) : transform(pos)
+Sigil::Sigil(const bool blocks[SIZE][SIZE], const glm::ivec2 pos) : position(pos)
 {
     vector<Vertex> cube = shape::cube_vertex_array();
-    glm::mat4 scale = glm::scale(glm::mat4(1.f), glm::vec3(1.f / SIZE));
+    glm::mat4 scale = glm::scale(glm::mat4(1.f), glm::vec3(10.f,10.f,1.f));
 
     for(int i=0;i<SIZE;i++){
         for(int j=0;j<SIZE;j++){
@@ -50,11 +51,12 @@ Sigil::Sigil(const bool blocks[SIZE][SIZE], const glm::vec3 pos) : transform(pos
     // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
     glBindVertexArray(0); 
+    transform_.setTransform(glm::translate(glm::mat4(1.f), glm::vec3(position.x, position.y, 0.f)));
 }
 
 void Sigil::render(Shader* shader){
     glBindVertexArray(vAO_);
-    shader->setMat4("model", transform.transform());
+    shader->setMat4("model", transform_.transform());
     glDrawArrays(GL_TRIANGLES, 0, vertices_.size());
 }
 

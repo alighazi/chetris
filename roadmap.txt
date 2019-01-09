@@ -1,0 +1,13 @@
+first step is to just make a tetrs that works with arrow keys just like the version from 10000 year B.C
+
+the second step is to make the tetris not automatic, but give it a set of piece and the player can use mouse to get to arrange the pieces on the board
+and fill it (just like the talos principle)
+
+the third step is to add lightning and bump maping to the sigils and also to the board
+
+ther fourth step is to add some GUI for showing text
+
+5. add menu and welcome screen.
+6. introduce levels.
+7. introduce sound.
+8. save progress.

@@ -6,10 +6,9 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "core/util/Shader.h"
-#include "core/Camera.h"
 #include "core/util/ImageInfo.h"
 #include "core/util/to_string.hpp"
-#include "core/sigil.h"
+#include "core/sigil_board.h"
 using glm::vec3;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -38,7 +37,6 @@ void FreeImageErrorHandler(FREE_IMAGE_FORMAT fif, const char *message) {
 	printf(" ***\n");
 }
 
-Camera camera(SCR_WIDTH, SCR_HEIGHT);
 enum Direction{
     NONE = 0,
     RIGHT = 1,
@@ -57,7 +55,7 @@ void update(GLFWwindow* window, float deltaTime){
          dir = (Direction) (dir | Direction::DOWN);
     if(glfwGetKey(window, GLFW_KEY_UP)== GLFW_PRESS)
          dir = (Direction) (dir | Direction::UP);
-    camera.move(deltaTime, dir& Direction::LEFT,  dir& Direction::RIGHT, dir& Direction::UP, dir&Direction::DOWN);    
+    //camera.move(deltaTime, dir& Direction::LEFT,  dir& Direction::RIGHT, dir& Direction::UP, dir&Direction::DOWN);    
 }
 int main()
 { 
@@ -85,7 +83,7 @@ int main()
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetKeyCallback(window, key_callback);
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
+   // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
     glfwSetCursorPosCallback(window, mouse_callback);
 
     // glad: load all OpenGL function pointers
@@ -103,16 +101,7 @@ int main()
     // build and compile our shader zprogram
     Shader shader2("shader/default.vs", "shader/lamp.frag");
 
-    // set up vertex data (and buffer(s)) and configure vertex attributes
-    // ------------------------------------------------------------------
-    vector<Sigil*> sigils;
-    sigils.push_back(new Sigil(Sigil::blocks_S, vec3(-2.f,0.f,-3.f)));
-    sigils.push_back(new Sigil(Sigil::blocks_SR, vec3(-1.f,0.f,-3.f)));
-    sigils.push_back(new Sigil(Sigil::blocks_L, vec3(0.f,0.f,-3.f)));
-    sigils.push_back(new Sigil(Sigil::blocks_LR, vec3(1.f,0.f,-3.f)));
-    sigils.push_back(new Sigil(Sigil::blocks_Box, vec3(2.f,0.f,-3.f)));
-    sigils.push_back(new Sigil(Sigil::blocks_Bar, vec3(-3.f,0.f,-3.f)));
-    sigils.push_back(new Sigil(Sigil::blocks_S, vec3(3.f,0.f,-3.f)));
+    SigilBoard board(100,100);
 
     // load and create a texture 
     unsigned int texture1, texture2;
@@ -161,7 +150,8 @@ int main()
     // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
     // -------------------------------------------------------------------------------------------
     shader2.setInt("texture2", 1);
-
+    auto projectionMatrix = glm::ortho(0.f, board.getDimennsions().x, 0.f, board.getDimennsions().y, 0.1f, 10.f);
+    auto viewMatrix = glm::mat4(1.f);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     // render loop
     while (!glfwWindowShouldClose(window))
@@ -185,26 +175,23 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // also clear the depth buffer now!
 
         shader2.Use();
-        shader2.setMat4("view", *camera.getView());
-        shader2.setMat4("projection", *camera.getProjection());
+
+        shader2.setMat4("view", viewMatrix);
+        shader2.setMat4("projection", projectionMatrix);
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture1);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
 
-        for(int i=0;i<sigils.size();i++){
-            sigils[i]->update(deltaTime, currentFrame);
-            sigils[i]->render(&shader2);
-        }
+        board.update(deltaTime, currentFrame);
+        board.render(&shader2);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-    for(int i=0;i<sigils.size();i++){
-        delete sigils[i];
-    }
+    board.~SigilBoard();
     glfwTerminate();
     return 0;
 }
@@ -216,12 +203,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         glfwSetWindowShouldClose(window, true);
 }
 
-float pitch=0.f, yaw=-90.f;
-double lastX, lastY;
-bool firstMouse = true;
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-    camera.lookAt(xpos, ypos);
+    //camera.lookAt(xpos, ypos);
 } 
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

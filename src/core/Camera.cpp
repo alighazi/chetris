@@ -1,4 +1,4 @@
-#include "core/Camera.h"
+#include "core/camera.h"
 
 void Camera::move(float dt, bool left, bool right, bool up, bool down)
 {
