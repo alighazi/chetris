@@ -36,7 +36,6 @@ find_package(assimp 4 REQUIRED)
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/src/test")
 list(REMOVE_ITEM SOURCES "${PROJECT_SOURCE_DIR}/src/main.cpp")
-message("${SOURCES}") 
 
 add_executable(gl_tests ${SOURCES})
 target_link_libraries(gl_tests glfw libfreeimage.so libassimp.so.4)
