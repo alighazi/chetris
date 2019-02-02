@@ -13,6 +13,7 @@ class Sigil : GameObject
 friend class SigilBoard;
 public:
     static const int SIZE = 4;
+    static constexpr float SCALE = 10.f;
     static constexpr bool blocks_S[SIZE][SIZE]={    {0,1,1,0},
                                                     {1,1,0,0},
                                                     {0,0,0,0},
@@ -42,9 +43,12 @@ public:
     void render(Shader* shader);
     void update(float dt, float t);
     glm::ivec2 position;
+    float width();
+    float height();
 private:
     bool blocks_[Sigil::SIZE][Sigil::SIZE];
     vector<Vertex> vertices_;
     unsigned int vBO_, vAO_, eBO_;
     Transform transform_;
+    float width_, height_;
 };

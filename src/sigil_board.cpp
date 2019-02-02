@@ -3,7 +3,12 @@
 SigilBoard::SigilBoard(int width, int height)
 {
     dimensions_=glm::vec2(width,height);
-    sigils_.push_back(new Sigil(Sigil::blocks_S, vec3(80.f, 80.f, 1.f)));
+    sigils_.push_back(new Sigil(Sigil::blocks_S, vec3(0.f, 0.f, 1.f)));
+    sigils_.push_back(new Sigil(Sigil::blocks_Box, vec3(0.f, 0.f, 1.f)));
+    sigils_.push_back(new Sigil(Sigil::blocks_Bar, vec3(0.f, 0.f, 1.f)));
+    sigils_.push_back(new Sigil(Sigil::blocks_L, vec3(0.f, 0.f, 1.f)));
+    sigils_.push_back(new Sigil(Sigil::blocks_LR, vec3(0.f, 0.f, 1.f)));
+    sigils_.push_back(new Sigil(Sigil::blocks_SR, vec3(0.f, 0.f, 1.f)));
 }
 
 SigilBoard::~SigilBoard()

@@ -4,15 +4,16 @@
 #include "core/shape.h"
 #include "core/sigil.h"
 
-Sigil::Sigil(const bool blocks[SIZE][SIZE], const glm::ivec2 pos) : position(pos)
+Sigil::Sigil(const bool blocks[SIZE][SIZE], const glm::ivec2 pos) : position(pos), width_(-1.f), height_(-1.f)
 {
     vector<Vertex> cube = shape::cube_vertex_array();
-    glm::mat4 scale = glm::scale(glm::mat4(1.f), glm::vec3(10.f,10.f,1.f));
+    glm::mat4 scale = glm::scale(glm::mat4(1.f), glm::vec3(SCALE, SCALE, 1.f));
 
     for(int i=0;i<SIZE;i++){
         for(int j=0;j<SIZE;j++){
+            blocks_[i][j] = blocks[i][j];
             if(blocks[i][j]){
-                glm::mat4 model = glm::translate(glm::mat4(1.f), glm::vec3(j,i,0.f));
+                glm::mat4 model = glm::translate(glm::mat4(1.f), glm::vec3(j+0.5f,i+0.5f,0.f));
                 for(int k=0; k < cube.size(); k++){
                     Vertex v = Vertex(scale * model * glm::vec4(cube[k].position,1.f) , cube[k].color, cube[k].tex_coords);
                     vertices_.push_back(v);
@@ -20,7 +21,7 @@ Sigil::Sigil(const bool blocks[SIZE][SIZE], const glm::ivec2 pos) : position(pos
             }
         }
     }
-
+ 
     //TODO: populate indices as well
     auto indices = std::vector<unsigned int>();
 
@@ -69,4 +70,37 @@ Sigil::~Sigil()
     glDeleteVertexArrays(1, &vAO_);
     glDeleteBuffers(1, &vBO_);
     glDeleteBuffers(1, &eBO_);
+}
+
+float Sigil::width(){
+    if(width_>=0) return width_;
+    width_=0;
+    for(int i = 0; i < SIZE; i++)
+    {
+        for(int j = 0; j < SIZE; j++)
+        {
+            if(blocks_[i][j] && j+1 > width_){
+                width_ = j+1;
+                if(width_ == SIZE)
+                    return width_;
+            }
+        }
+    }
+    return width_;
+}
+
+float Sigil::height(){
+    if(height_>=0) return height_;
+    height_=0;
+    for(int i = 0; i < SIZE; i++)
+    {
+        for(int j = 0; j < SIZE; j++)
+        {
+            if(blocks_[i][j]){
+                height_= i+1;
+                continue;
+            }
+        }
+    }
+    return height_;
 }
