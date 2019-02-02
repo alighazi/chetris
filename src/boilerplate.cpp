@@ -4,7 +4,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "core/util/ImageInfo.h"
-#include "core/util/to_string.hpp"
 #include "core/sigil_board.h"
 #include "core/boilerplate.h"
 using glm::vec3;

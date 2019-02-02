@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 #include <vector>
 #include "glm/glm.hpp"
@@ -5,8 +6,11 @@
 
 namespace std{
 
-    string to_string(glm::vec3 &v){
+    string to_string(const glm::vec3 &v){
         return fmt::format("[{:.4}, {:.4}, {:.4}]", v.x,v.y,v.z);
+    }
+    string to_string(const glm::vec2 &v){
+        return fmt::format("[{:.4}, {:.4}]", v.x,v.y);
     }
 
     string to_string(std::vector<glm::vec3> &v){

@@ -1,6 +1,7 @@
 #pragma once
 #include "sigil.h"
 using glm::vec3;
+using glm::vec2;
 
 class SigilBoard
 {
@@ -12,5 +13,6 @@ public:
     ~SigilBoard();
     void render(Shader* shader);
     void update(float dt, float t);
-    glm::vec2 getDimennsions(){return dimensions_;}
+    vec2 getDimennsions(){return dimensions_;}
+    Sigil* add(int x,int y);
 };

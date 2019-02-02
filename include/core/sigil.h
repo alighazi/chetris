@@ -13,7 +13,7 @@ class Sigil : GameObject
 friend class SigilBoard;
 public:
     static const int SIZE = 4;
-    static constexpr float SCALE = 10.f;
+    static constexpr float SCALE = 1.f;
     static constexpr bool blocks_S[SIZE][SIZE]={    {0,1,1,0},
                                                     {1,1,0,0},
                                                     {0,0,0,0},
@@ -38,11 +38,12 @@ public:
                                                     {0,0,0,0},
                                                     {0,0,0,0},
                                                     {0,0,0,0}};                                                
-    Sigil(const bool blocks[SIZE][SIZE], const glm::ivec2 pos);
+    Sigil(const bool blocks[SIZE][SIZE], const glm::ivec2 pos, const glm::vec2 velocity = glm::vec2(0.f,0.f));
     ~Sigil();
     void render(Shader* shader);
     void update(float dt, float t);
-    glm::ivec2 position;
+    glm::vec2 position;
+    glm::vec2 velocity;
     float width();
     float height();
 private:

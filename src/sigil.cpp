@@ -3,8 +3,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "core/shape.h"
 #include "core/sigil.h"
+#include "core/util/to_string.hpp"
 
-Sigil::Sigil(const bool blocks[SIZE][SIZE], const glm::ivec2 pos) : position(pos), width_(-1.f), height_(-1.f)
+Sigil::Sigil(const bool blocks[SIZE][SIZE], const glm::ivec2 pos, const glm::vec2 velocity) 
+: position(pos), width_(-1.f), height_(-1.f), velocity(velocity)
 {
     vector<Vertex> cube = shape::cube_vertex_array();
     glm::mat4 scale = glm::scale(glm::mat4(1.f), glm::vec3(SCALE, SCALE, 1.f));
@@ -52,7 +54,8 @@ Sigil::Sigil(const bool blocks[SIZE][SIZE], const glm::ivec2 pos) : position(pos
     // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
     glBindVertexArray(0); 
-    transform_.setTransform(glm::translate(glm::mat4(1.f), glm::vec3(position.x, position.y, 0.f)));
+    std::cout<<"velocity: "<<std::to_string(this->velocity)<<std::endl;
+
 }
 
 void Sigil::render(Shader* shader){
@@ -62,7 +65,11 @@ void Sigil::render(Shader* shader){
 }
 
 void Sigil::update(float dt, float t){
-
+    position.x += velocity.x*dt;
+    position.y += velocity.y*dt;
+    // std::cout<<"position: "<<std::to_string(position)<<std::endl;
+    // std::cout<<"velocity: "<<std::to_string(position)<<std::endl;
+    transform_.setTransform(glm::translate(glm::mat4(1.f), glm::vec3(position.x, position.y, 0.f)));
 }
 
 Sigil::~Sigil()
@@ -74,24 +81,23 @@ Sigil::~Sigil()
 
 float Sigil::width(){
     if(width_>=0) return width_;
-    width_=0;
+    width_=0.f;
     for(int i = 0; i < SIZE; i++)
     {
         for(int j = 0; j < SIZE; j++)
         {
             if(blocks_[i][j] && j+1 > width_){
                 width_ = j+1;
-                if(width_ == SIZE)
-                    return width_;
             }
         }
     }
+    width_*=SCALE;
     return width_;
 }
 
 float Sigil::height(){
     if(height_>=0) return height_;
-    height_=0;
+    height_=0.f;
     for(int i = 0; i < SIZE; i++)
     {
         for(int j = 0; j < SIZE; j++)
@@ -102,5 +108,6 @@ float Sigil::height(){
             }
         }
     }
+    height_*=SCALE;
     return height_;
 }
