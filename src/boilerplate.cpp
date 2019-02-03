@@ -28,25 +28,17 @@ void FreeImageErrorHandler(FREE_IMAGE_FORMAT fif, const char *message) {
 	printf(" ***\n");
 }
 
-enum Direction{
-    NONE = 0,
-    RIGHT = 1,
-    UP = 2,
-    DOWN = 4,
-    LEFT = 8
-};
-
 void Boilerplate::update(float deltaTime){
 
-    Direction dir= Direction::NONE;
-    if(glfwGetKey(window, GLFW_KEY_LEFT)== GLFW_PRESS)
-        dir = (Direction) (dir | Direction::LEFT);
-    if(glfwGetKey(window, GLFW_KEY_RIGHT)== GLFW_PRESS)
-         dir = (Direction) (dir | Direction::RIGHT);
-    if(glfwGetKey(window, GLFW_KEY_DOWN)== GLFW_PRESS)
-         dir = (Direction) (dir | Direction::DOWN);
-    if(glfwGetKey(window, GLFW_KEY_UP)== GLFW_PRESS)
-         dir = (Direction) (dir | Direction::UP);
+    // direction = Direction::NONE;
+    // if(glfwGetKey(window, GLFW_KEY_LEFT)== GLFW_PRESS)
+    //     direction = (Direction) (direction | Direction::LEFT);
+    // if(glfwGetKey(window, GLFW_KEY_RIGHT)== GLFW_PRESS)
+    //      direction = (Direction) (direction | Direction::RIGHT);
+    // if(glfwGetKey(window, GLFW_KEY_DOWN)== GLFW_PRESS)
+    //      direction = (Direction) (direction | Direction::DOWN);
+    // if(glfwGetKey(window, GLFW_KEY_UP)== GLFW_PRESS)
+    //      direction = (Direction) (direction | Direction::UP);
     //camera.move(deltaTime, dir& Direction::LEFT,  dir& Direction::RIGHT, dir& Direction::UP, dir&Direction::DOWN);    
 }
 
@@ -150,23 +142,35 @@ Boilerplate::~Boilerplate()
     }
 }
 
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+void Boilerplate::addInputConsumer(InputConsumer* ic)
+{ 
+    input_consumers_.push_back(ic);
+}
+
+void Boilerplate::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     static int depth=6, color_seed=15;
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+
+    if(action == GLFW_RELEASE && Boilerplate::instance().input_consumers_.size()){
+        for(auto&& ic : Boilerplate::instance().input_consumers_)
+        {
+            ic->onKeyRelease(key);
+        }
+    }
+        
 }
 
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+void Boilerplate::mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
     //camera.lookAt(xpos, ypos);
 } 
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+void Boilerplate::framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     // make sure the viewport matches the new window dimensions; note that width and 
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
 }
-

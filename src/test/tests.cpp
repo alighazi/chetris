@@ -3,7 +3,8 @@
 #include "core/boilerplate.h"
 #include "core/sigil.h"
 
-Boilerplate boileplate; //important to create one to initialize dependencies;
+Boilerplate& boileplate = Boilerplate::instance(); //important to create one to initialize dependencies;
+
 TEST_CASE("sigil width and height"){
     SECTION( "width and height of bar is 4 and 1" ) {
         Sigil s = Sigil(Sigil::blocks_Bar, glm::ivec2(0,0));

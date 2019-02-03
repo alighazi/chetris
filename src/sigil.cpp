@@ -111,3 +111,14 @@ float Sigil::height(){
     height_*=SCALE;
     return height_;
 }
+
+void Sigil::move(Boilerplate::Direction dir){
+    if(dir & Boilerplate::LEFT){
+        position.x -= SCALE;
+        std::cout<<"move left"<<std::endl;
+    }
+    else if (dir & Boilerplate::RIGHT){
+        position.x += SCALE;
+        std::cout<<"move right"<<std::endl;
+    }
+}

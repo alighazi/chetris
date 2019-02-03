@@ -6,6 +6,7 @@ using std::vector;
 #include "vertex.h"
 #include "game_object.h"
 #include "transform.h"
+#include "core/boilerplate.h"
 
 
 class Sigil : GameObject
@@ -46,6 +47,7 @@ public:
     glm::vec2 velocity;
     float width();
     float height();
+    void move(Boilerplate::Direction dir);
 private:
     bool blocks_[Sigil::SIZE][Sigil::SIZE];
     vector<Vertex> vertices_;

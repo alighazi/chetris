@@ -6,7 +6,7 @@ GLfloat lastFrame = 0.0f;  	// Time of last frame
 
 int main()
 { 
-    Boilerplate boilerplate;
+    Boilerplate &boilerplate = Boilerplate::instance();
     SigilBoard board(10,10);
     auto projectionMatrix = glm::ortho(0.f, board.getDimennsions().x, 0.f, board.getDimennsions().y, 0.1f, 10.f);
     auto viewMatrix = glm::mat4(1.f);
