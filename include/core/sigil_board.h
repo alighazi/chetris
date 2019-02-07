@@ -1,14 +1,14 @@
 #pragma once
 #include "sigil.h"
-#include "input_consumer.h"
+#include "input_handler.h"
 using glm::vec3;
 using glm::vec2;
 
-class SigilBoard: GameObject, InputConsumer
+class SigilBoard: GameObject, InputHandler
 {
 private:
     glm::vec2 dimensions_;
-    vector<Sigil*> sigils_;
+    Sigil *sigil_;
 public:
     SigilBoard(int width, int height);
     ~SigilBoard();
@@ -16,5 +16,4 @@ public:
     void update(float dt, float t);
     void onKeyRelease(int key);
     vec2 getDimennsions(){return dimensions_;}
-    Sigil* add(int x,int y);
 };

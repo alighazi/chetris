@@ -1,5 +1,5 @@
 #pragma once
-class InputConsumer
+class InputHandler
 {
 private:
 public:

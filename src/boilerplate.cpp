@@ -142,9 +142,9 @@ Boilerplate::~Boilerplate()
     }
 }
 
-void Boilerplate::addInputConsumer(InputConsumer* ic)
+void Boilerplate::addInputHandler(InputHandler* ic)
 { 
-    input_consumers_.push_back(ic);
+    input_handlers_.push_back(ic);
 }
 
 void Boilerplate::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -153,8 +153,8 @@ void Boilerplate::key_callback(GLFWwindow* window, int key, int scancode, int ac
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
-    if(action == GLFW_RELEASE && Boilerplate::instance().input_consumers_.size()){
-        for(auto&& ic : Boilerplate::instance().input_consumers_)
+    if(action == GLFW_RELEASE && Boilerplate::instance().input_handlers_.size()){
+        for(auto&& ic : Boilerplate::instance().input_handlers_)
         {
             ic->onKeyRelease(key);
         }

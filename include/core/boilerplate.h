@@ -4,13 +4,13 @@
 #include <GLFW/glfw3.h>
 #include <vector>
 #include "core/util/Shader.h"
-#include "core/input_consumer.h"
+#include "core/input_handler.h"
 
 class Boilerplate
 {
 private:
     //private constructor, we don't want instantiation to be possible
-    std::vector<InputConsumer*> input_consumers_;
+    std::vector<InputHandler*> input_handlers_;
     Boilerplate();
     //libgdx callbacks
     static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -40,5 +40,5 @@ public:
     ~Boilerplate();
     Boilerplate(Boilerplate const&)     = delete;
     void operator=(Boilerplate const&)  = delete;
-    void addInputConsumer(InputConsumer* ic);
+    void addInputHandler(InputHandler* ic);
 };

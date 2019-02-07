@@ -44,6 +44,9 @@
         "string_view": "cpp",
         "system_error": "cpp",
         "cinttypes": "cpp",
-        "tuple": "cpp"
+        "tuple": "cpp",
+        "bitset": "cpp",
+        "numeric": "cpp",
+        "variant": "cpp"
     }
 }

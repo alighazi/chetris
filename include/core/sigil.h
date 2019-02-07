@@ -7,6 +7,7 @@ using std::vector;
 #include "game_object.h"
 #include "transform.h"
 #include "core/boilerplate.h"
+#include "rect.h"
 
 
 class Sigil : GameObject
@@ -39,19 +40,20 @@ public:
                                                     {0,0,0,0},
                                                     {0,0,0,0},
                                                     {0,0,0,0}};                                                
-    Sigil(const bool blocks[SIZE][SIZE], const glm::ivec2 pos, const glm::vec2 velocity = glm::vec2(0.f,0.f));
+    Sigil(const bool blocks[SIZE][SIZE], const glm::ivec2 pos);
     ~Sigil();
     void render(Shader* shader);
     void update(float dt, float t);
-    glm::vec2 position;
-    glm::vec2 velocity;
-    float width();
-    float height();
+    inline glm::ivec2 position() const { return bounds_.position(); }
     void move(Boilerplate::Direction dir);
+    inline const iRect* bounds() const { return &bounds_; }
 private:
+    void updateBounds();
+    int width();
+    int height();
     bool blocks_[Sigil::SIZE][Sigil::SIZE];
     vector<Vertex> vertices_;
     unsigned int vBO_, vAO_, eBO_;
     Transform transform_;
-    float width_, height_;
+    iRect bounds_;
 };
