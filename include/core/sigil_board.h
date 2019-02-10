@@ -10,6 +10,7 @@ private:
     glm::vec2 dimensions_;
     Sigil *sigil_;
     vector<Sigil*> all_;
+    vector<vector<bool>> blocks_;
 public:
     SigilBoard(int width, int height);
     ~SigilBoard();
@@ -18,4 +19,5 @@ public:
     void onKeyRelease(int key);
     vec2 getDimennsions(){return dimensions_;}
     void spawn();
+    bool checkCollision();
 };

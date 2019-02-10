@@ -6,6 +6,7 @@
 #include "core/util/ImageInfo.h"
 #include "core/sigil_board.h"
 #include "core/boilerplate.h"
+#include <experimental/vector>
 using glm::vec3;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);

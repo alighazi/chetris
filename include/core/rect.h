@@ -1,6 +1,5 @@
 #include "glm/glm.hpp"
 
-
 template <typename T>
 class GRect
 {
@@ -38,6 +37,8 @@ public:
     inline V2 position() const { return V2(left(), bottom()); }
     inline void move(T dx, T dy) {bounds_ = V4(top()+dy, right()+dx, bottom()+ dy, left()+dx); }
     inline void moveTo(T x, T y) {bounds_ = V4(y+ height(), x+width(), y, x); }
+    inline bool collides(GRect<T> r) { return glm::abs(left() - r.left()) < width() && glm::abs(bottom() - r.bottom()) < height(); }
+    inline bool collides(T x, T y) { return x >= left() && y >= bottom(); }
 
     void dump() const {std::cout<<"top: "<<top()<<" right: "<<right()<<" bottom: "<<bottom()<< " left: "<< left()<<std::endl;}
 };

@@ -4,6 +4,7 @@
 SigilBoard::SigilBoard(int width, int height)
 {
     dimensions_= glm::vec2(width,height);
+    Boilerplate::instance().addInputHandler(this);  
     spawn();
 }
 
@@ -27,11 +28,12 @@ void SigilBoard::update(float dt, float t){
     last_frame += dt;
     if(last_frame < 1.f)
         return;
-    if(sigil_->bounds()->bottom() >0 )
-        sigil_->move(Boilerplate::DOWN);
-    else
-        spawn();
 
+    sigil_->move(Boilerplate::DOWN);
+    if(sigil_->bounds()->bottom() <0 || checkCollision()){
+        sigil_->move(Boilerplate::UP);
+        spawn();
+    }
     for(Sigil* s:all_){
         s->update(dt, t);
     }
@@ -56,19 +58,22 @@ void SigilBoard::onKeyRelease(int key){
 }
 
 void SigilBoard::spawn(){
-    using type = const bool[Sigil::SIZE];
-    static type* block_types[] = {  Sigil::blocks_S, Sigil::blocks_SR,
+    using type = const block_def;
+    static type block_types[] = {  Sigil::blocks_S, Sigil::blocks_SR,
                                     Sigil::blocks_L, Sigil::blocks_LR,
                                     Sigil::blocks_Box, Sigil::blocks_Bar};
     int r = std::rand()% 6;
     std::cout<<"spawning: "<<r<<std::endl;
-    for(int i=0;i<4;i++){
-        for(int j=0;j<4;j++){
-            std::cout<<block_types[0][i][j];
-        }
-        std::cout<<'\n';
-    }
+
     sigil_ =  new Sigil(block_types[r], vec3(0.f, (float)dimensions_.y- 3, 1.f));
     all_.push_back(sigil_);
-    Boilerplate::instance().addInputHandler(this);  
+}
+
+bool SigilBoard::checkCollision(){
+    for(int i=0;i<all_.size(); i++){
+        if(all_[i]!=sigil_ && sigil_->collidesWith(all_[i])){
+            std::cout<<"collision occured"<<std::endl;
+            return true;
+        }
+    }
 }
