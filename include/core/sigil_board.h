@@ -9,6 +9,7 @@ class SigilBoard: GameObject, InputHandler
 private:
     glm::vec2 dimensions_;
     Sigil *sigil_;
+    vector<Sigil*> all_;
 public:
     SigilBoard(int width, int height);
     ~SigilBoard();
@@ -16,4 +17,5 @@ public:
     void update(float dt, float t);
     void onKeyRelease(int key);
     vec2 getDimennsions(){return dimensions_;}
+    void spawn();
 };

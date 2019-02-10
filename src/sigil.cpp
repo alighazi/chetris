@@ -63,7 +63,6 @@ void Sigil::render(Shader* shader){
 }
 
 void Sigil::update(float dt, float t){
-    bounds_.move(0, -int(glm::floor(dt)));
     transform_.setTransform(glm::translate(glm::mat4(1.f),
      glm::vec3(bounds_.position().x, bounds_.position().y, 0.f)));
 }
@@ -113,5 +112,8 @@ void Sigil::move(Boilerplate::Direction dir){
     else if (dir & Boilerplate::RIGHT){
         bounds_.move(+SCALE, 0);
         std::cout<<"move right"<<std::endl;
+    }
+    else if (dir & Boilerplate::DOWN){
+        bounds_.move(0, -SCALE);
     }
 }
